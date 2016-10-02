@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>hello</title>
+	</head>
+	<body>
+		<div class="chat">
+			<ul>
+				<li v-for="message in messages">{{	message	}}</li>
+			</ul>
+			<input type="text" v-model="message" v-on:keydown="send">
+		</div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.14/vue.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.js"></script>
+		<script>
+			var socket= io();
+			new Vue({
+				el:'.chat',
+				data:{
+					message:'',
+					messages:[]
+				},
+				methods:{
+					send: function(e){
+						if (e.keyCode !== 13) {
+							return;
+						}
+						//send
+						socket.emit('message.sent',this.message);
+						this.message='';
+					}
+				},
+		created: function () {
+		socket.on('message', function (message) {
+			console.log(message);
+		this.messages.push(message);
+		}.bind(this));
+		}
+			});
+		</script>
+	</body>
+</html>
